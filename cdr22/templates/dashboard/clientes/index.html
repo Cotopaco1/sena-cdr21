@@ -9,9 +9,7 @@
     
     <!-- Botón crear cliente -->
     <div class="flex justify-end mb-6">
-        <a href="{% url 'clientes_crear' %}" class="btn btn-md btn-success">
-            + Crear Cliente
-        </a>
+        <a href="{% url 'clientes_crear' %}" class="btn btn-md btn-success">Crear cliente</a>
     </div>
 
     <!-- Tabla de clientes -->
@@ -51,11 +49,11 @@
                         <div class="flex justify-center space-x-2">
                             <a href="{% url 'clientes_editar' cliente.id %}" 
                                class="btn btn-sm btn-primary">
-                                ✏️ Editar
+                                Editar
                             </a>
                             <a href="{% url 'clientes_eliminar' cliente.id %}" 
                                class="btn btn-sm btn-danger">
-                                🗑️ Eliminar
+                                Eliminar
                             </a>
                         </div>
                     </td>
@@ -64,12 +62,9 @@
                 <tr>
                     <td colspan="6" class="empty-state-cell">
                         <div class="empty-state">
-                            <div class="empty-state-icon">👥</div>
                             <p class="empty-state-title">No hay clientes registrados</p>
                             <p class="empty-state-description">Comience creando su primer cliente</p>
-                            <a href="{% url 'clientes_crear' %}" class="mt-4 btn btn-md btn-success">
-                                + Crear Primer Cliente
-                            </a>
+                            <a href="{% url 'clientes_crear' %}" class="mt-4 btn btn-md btn-success">Crear primer cliente</a>
                         </div>
                     </td>
                 </tr>

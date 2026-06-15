@@ -7,7 +7,7 @@
 <div class="max-w-3xl mx-auto">
     {% include 'components/dashboard/page_header.html' with titulo="Crear Categoría" descripcion="Agregue una categoría para clasificar productos del inventario" %}
 
-    <form method="POST" class="bg-white rounded-lg shadow p-8">
+    <form method="POST" class="dashboard-card p-8">
         {% csrf_token %}
 
         <div class="mb-6 flex flex-col">
@@ -42,10 +42,10 @@
         {% endif %}
 
         <div class="flex gap-4">
-            <button type="submit" class="formulario_boton formulario_boton_verde">
+            <button type="submit" class="btn btn-md btn-primary">
                 Crear Categoría
             </button>
-            <a href="{% url 'categorias_index' %}" class="formulario_boton" style="background-color: #6c757d; color: white; text-decoration: none; text-align: center;">
+            <a href="{% url 'categorias_index' %}" class="btn btn-md btn-secondary">
                 Cancelar
             </a>
         </div>

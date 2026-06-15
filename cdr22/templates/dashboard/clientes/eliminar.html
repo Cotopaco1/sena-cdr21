@@ -7,9 +7,8 @@
 <div class="max-w-2xl mx-auto">
     {% include 'components/dashboard/page_header.html' with titulo="Eliminar Cliente" descripcion="Esta acción no se puede deshacer" %}
     
-    <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+    <div class="dashboard-card p-6 border-l-4 border-red-500">
         <div class="flex gap-4 items-start mb-6">
-            <div class="text-4xl">⚠️</div>
             <div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">¿Está seguro?</h3>
                 <p class="text-gray-600">
@@ -44,11 +43,11 @@
         <form method="POST" class="flex gap-4">
             {% csrf_token %}
             
-            <button type="submit" class="formulario_boton formulario_boton_rojo">
-                🗑️ Eliminar Cliente
+            <button type="submit" class="btn btn-md btn-solid-danger">
+                Eliminar cliente
             </button>
-            <a href="{% url 'clientes_index' %}" class="formulario_boton formulario_boton_gris">
-                ← Cancelar
+            <a href="{% url 'clientes_index' %}" class="btn btn-md btn-secondary">
+                Cancelar
             </a>
         </form>
     </div>

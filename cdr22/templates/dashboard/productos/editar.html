@@ -7,7 +7,7 @@
 <div class="max-w-6xl mx-auto">
     {% include 'components/dashboard/page_header.html' with titulo="Editar Producto" descripcion="Modifique los campos necesarios para actualizar el producto" %}
     
-    <form method="POST" class="bg-white rounded-lg shadow p-8">
+    <form method="POST" class="dashboard-card p-8">
         {% csrf_token %}
         
         <!-- Grid responsive: 1 columna en móvil, 2 columnas en desktop -->
@@ -169,10 +169,10 @@
 
         <!-- Botones -->
         <div class="flex gap-4">
-            <button type="submit" class="formulario_boton formulario_boton_verde">
+            <button type="submit" class="btn btn-md btn-primary">
                 Actualizar Producto
             </button>
-            <a href="{% url 'productos_index' %}" class="formulario_boton" style="background-color: #6c757d; color: white; text-decoration: none; text-align: center;">
+            <a href="{% url 'productos_index' %}" class="btn btn-md btn-secondary">
                 Cancelar
             </a>
         </div>

@@ -8,9 +8,7 @@
     {% include 'components/dashboard/page_header.html' with titulo="Categorías de Inventario" descripcion="Administre las categorías usadas para organizar los productos" %}
 
     <div class="flex justify-end mb-6">
-        <a href="{% url 'categorias_crear' %}" class="btn btn-md btn-success">
-            + Crear Categoría
-        </a>
+        <a href="{% url 'categorias_crear' %}" class="btn btn-md btn-success">Crear categoría</a>
     </div>
 
     <div class="data-table-wrapper">
@@ -38,10 +36,10 @@
                     <td class="table-data text-center">
                         <div class="flex justify-center space-x-2">
                             <a href="{% url 'categorias_editar' categoria.id %}" class="btn btn-sm btn-primary">
-                                ✏️ Editar
+                                Editar
                             </a>
                             <a href="{% url 'categorias_eliminar' categoria.id %}" class="btn btn-sm btn-danger">
-                                🗑️ Eliminar
+                                Eliminar
                             </a>
                         </div>
                     </td>
@@ -50,12 +48,9 @@
                 <tr>
                     <td colspan="4" class="empty-state-cell">
                         <div class="empty-state">
-                            <div class="empty-state-icon">🏷️</div>
                             <p class="empty-state-title">No hay categorías registradas</p>
                             <p class="empty-state-description">Comience creando la primera categoría del inventario</p>
-                            <a href="{% url 'categorias_crear' %}" class="mt-4 btn btn-md btn-success">
-                                + Crear Primera Categoría
-                            </a>
+                            <a href="{% url 'categorias_crear' %}" class="mt-4 btn btn-md btn-success">Crear primera categoría</a>
                         </div>
                     </td>
                 </tr>

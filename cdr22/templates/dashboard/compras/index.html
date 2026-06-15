@@ -9,9 +9,7 @@
     {% include 'components/dashboard/page_header.html' with titulo="Gestión de Compras" descripcion="Registre compras, controle recepciones y mantenga el historial de stock" %}
 
     <div class="flex justify-end mb-6">
-        <a href="{% url 'compras_crear' %}" class="btn btn-md btn-success">
-            + Crear Compra
-        </a>
+        <a href="{% url 'compras_crear' %}" class="btn btn-md btn-success">Crear compra</a>
     </div>
 
     <div class="data-table-wrapper-tall">
@@ -71,12 +69,9 @@
                 <tr>
                     <td colspan="8" class="empty-state-cell">
                         <div class="empty-state">
-                            <div class="empty-state-icon">🧾</div>
                             <p class="empty-state-title">No hay compras registradas</p>
                             <p class="empty-state-description">Comience creando una compra para alimentar el inventario</p>
-                            <a href="{% url 'compras_crear' %}" class="mt-4 btn btn-md btn-success">
-                                + Crear Primera Compra
-                            </a>
+                            <a href="{% url 'compras_crear' %}" class="mt-4 btn btn-md btn-success">Crear primera compra</a>
                         </div>
                     </td>
                 </tr>

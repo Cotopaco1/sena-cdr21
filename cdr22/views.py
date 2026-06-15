@@ -191,7 +191,7 @@ def testing(request):
 """ Productos Views """
 @login_required(login_url='login')
 def categorias_index(request):
-    categorias_list = Categoria.objects.annotate(productos_count=Count('productos')).all()
+    categorias_list = Categoria.objects.annotate(productos_count=Count('productos')).order_by('nombre')
     paginator = Paginator(categorias_list, 10)
     page_number = request.GET.get('page')
     categorias = paginator.get_page(page_number)
@@ -472,7 +472,7 @@ def clientes_eliminar(request, cliente_id):
 
 @login_required(login_url='login')
 def proveedores_index(request):
-    proveedores_list = Proveedor.objects.annotate(compras_count=Count('compras')).all()
+    proveedores_list = Proveedor.objects.annotate(compras_count=Count('compras')).order_by('nombre')
     paginator = Paginator(proveedores_list, 10)
     page_number = request.GET.get('page')
     proveedores = paginator.get_page(page_number)

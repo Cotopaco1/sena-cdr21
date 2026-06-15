@@ -13,7 +13,7 @@
     </div>
     {% endif %}
     
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="dashboard-card p-6">
         <form method="POST" class="space-y-6">
             {% csrf_token %}
             
@@ -80,11 +80,11 @@
             </div>
             
             <div class="flex gap-4 pt-6">
-                <button type="submit" class="formulario_boton formulario_boton_verde">
-                    ✓ Guardar Cambios
+                <button type="submit" class="btn btn-md btn-primary">
+                    Guardar cambios
                 </button>
-                <a href="{% url 'clientes_index' %}" class="formulario_boton formulario_boton_gris">
-                    ← Cancelar
+                <a href="{% url 'clientes_index' %}" class="btn btn-md btn-secondary">
+                    Cancelar
                 </a>
             </div>
         </form>

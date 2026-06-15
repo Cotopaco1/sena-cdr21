@@ -73,7 +73,7 @@
   }
 
   .auth_nav_group_menu {
-    @apply mt-2 hidden min-w-48 rounded-md bg-white py-2 shadow-lg ring-1 ring-black/5;
+    @apply mt-2 hidden min-w-48 rounded-md border border-gray-200 bg-white py-2 shadow-lg;
   }
 
   .auth_nav_group:hover .auth_nav_group_menu,
@@ -82,7 +82,7 @@
   }
 
   .auth_nav_group_link {
-    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50;
+    @apply block px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50;
   }
 
   .auth_nav_group_link_disabled {
@@ -98,7 +98,7 @@
   }
 
   .auth_user_menu_panel {
-    @apply hidden absolute right-0 top-full z-10 mt-2 w-48 rounded-md bg-white py-2 shadow-lg ring-1 ring-black/5;
+    @apply hidden absolute right-0 top-full z-10 mt-2 w-48 rounded-md border border-gray-200 bg-white py-2 shadow-lg;
   }
 
   .auth_user_menu:hover .auth_user_menu_panel,
@@ -156,10 +156,10 @@
 
   /* Estilos reutilizables para tablas */
   .table-header {
-    @apply px-6 py-3 text-left text-sm font-semibold;
+    @apply px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500;
   }
 
   .table-data {
-    @apply px-6 py-3 text-sm;
+    @apply px-6 py-3 text-sm text-gray-700;
   }
 }

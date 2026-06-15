@@ -10,9 +10,7 @@
     
     <!-- Botón crear producto -->
     <div class="flex justify-end mb-6">
-        <a href="{% url 'productos_crear' %}" class="btn btn-md btn-success">
-            + Crear Producto
-        </a>
+        <a href="{% url 'productos_crear' %}" class="btn btn-md btn-success">Crear producto</a>
     </div>
 
     <!-- Tabla de productos -->
@@ -61,11 +59,11 @@
                         <div class="flex justify-center space-x-2">
                             <a href="{% url 'productos_editar' producto.id %}" 
                                class="btn btn-sm btn-primary">
-                                ✏️ Editar
+                                Editar
                             </a>
                             <a href="{% url 'productos_eliminar' producto.id %}" 
                                class="btn btn-sm btn-danger">
-                                🗑️ Eliminar
+                                Eliminar
                             </a>
                         </div>
                     </td>
@@ -74,12 +72,9 @@
                 <tr>
                     <td colspan="8" class="empty-state-cell">
                         <div class="empty-state">
-                            <div class="empty-state-icon">📦</div>
                             <p class="empty-state-title">No hay productos registrados</p>
                             <p class="empty-state-description">Comience creando su primer producto</p>
-                            <a href="{% url 'productos_crear' %}" class="mt-4 btn btn-md btn-success">
-                                + Crear Primer Producto
-                            </a>
+                            <a href="{% url 'productos_crear' %}" class="mt-4 btn btn-md btn-success">Crear primer producto</a>
                         </div>
                     </td>
                 </tr>
