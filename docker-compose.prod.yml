@@ -29,14 +29,15 @@ services:
       - "8000"
 
   nginx:
-    image: nginx:1.27-alpine
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
     restart: unless-stopped
     depends_on:
       - web
     expose:
       - "80"
     volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - cdr22-media:/app/media:ro
       - cdr22-static:/app/staticfiles:ro
 
