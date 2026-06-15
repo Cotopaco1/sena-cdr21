@@ -6,6 +6,13 @@ from django.utils.decorators import method_decorator
 from django.db import models
 from .api_responses import error_response, success_response, validation_error_response
 from .models import Compra, Orden, Producto, Cliente
+from .roles import (
+    PERM_MANAGE_CLIENTS,
+    PERM_MANAGE_PURCHASES,
+    PERM_MANAGE_SALES,
+    user_can,
+    user_can_any,
+)
 from .serializers import (
     CompraCreateSerializer,
     CompraEstadoSerializer,
@@ -19,6 +26,26 @@ from .services.facturas import enviar_factura_por_email, render_factura_pdf
 from .services.ventas import OrdenStockError, crear_orden_pos
 import json
 
+
+def _permission_error_response(request, permission):
+    if not request.user.is_authenticated:
+        return error_response("Autenticación requerida", status=401)
+
+    if not user_can(request.user, permission):
+        return error_response("No tienes permisos para realizar esta acción", status=403)
+
+    return None
+
+
+def _any_permission_error_response(request, permissions):
+    if not request.user.is_authenticated:
+        return error_response("Autenticación requerida", status=401)
+
+    if not user_can_any(request.user, permissions):
+        return error_response("No tienes permisos para realizar esta acción", status=403)
+
+    return None
+
 # class Authentication: 
 #     def login() : 
 #         return ''
@@ -28,6 +55,9 @@ import json
 @method_decorator(csrf_exempt, name='dispatch')
 class OrdenAPIView(View):
     def post(self, request) :
+        permission_error = _permission_error_response(request, PERM_MANAGE_SALES)
+        if permission_error:
+            return permission_error
 
         """ Validar JSON """
         try:
@@ -61,6 +91,10 @@ class OrdenAPIView(View):
             
         }, status=201)
     def get(self, request) : 
+        permission_error = _permission_error_response(request, PERM_MANAGE_SALES)
+        if permission_error:
+            return permission_error
+
         ordenes = Orden.objects.all()
         serializer = OrdenReadSerializer(ordenes, many=True)
         return JsonResponse({
@@ -71,6 +105,10 @@ class OrdenAPIView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class Reportes(View):
     def get(self, request):
+        permission_error = _permission_error_response(request, PERM_MANAGE_SALES)
+        if permission_error:
+            return permission_error
+
         total_ordenes = 0
         numero_de_ordenes=0
         agrupacion_pagos={}
@@ -98,6 +136,13 @@ class Reportes(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ProductoSearchAPIView(View):
     def get(self, request):
+        permission_error = _any_permission_error_response(
+            request,
+            {PERM_MANAGE_SALES, PERM_MANAGE_PURCHASES},
+        )
+        if permission_error:
+            return permission_error
+
         query = request.GET.get('q', '').strip()
         
         if not query:
@@ -135,6 +180,10 @@ class ProductoSearchAPIView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ClienteSearchAPIView(View):
     def get(self, request):
+        permission_error = _permission_error_response(request, PERM_MANAGE_CLIENTS)
+        if permission_error:
+            return permission_error
+
         cedula = request.GET.get('cedula', '').strip()
         
         if not cedula:
@@ -165,6 +214,10 @@ class ClienteSearchAPIView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ClienteCreateAPIView(View):
     def post(self, request):
+        permission_error = _permission_error_response(request, PERM_MANAGE_CLIENTS)
+        if permission_error:
+            return permission_error
+
         try:
             data = json.loads(request.body)
         except:
@@ -217,6 +270,10 @@ class ClienteCreateAPIView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class OrdenCreateAPIView(View):
     def post(self, request):
+        permission_error = _permission_error_response(request, PERM_MANAGE_SALES)
+        if permission_error:
+            return permission_error
+
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
@@ -272,6 +329,10 @@ class OrdenCreateAPIView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class FacturaPDFAPIView(View):
     def get(self, request, orden_id):
+        permission_error = _permission_error_response(request, PERM_MANAGE_SALES)
+        if permission_error:
+            return permission_error
+
         try:
             orden = Orden.objects.select_related('cliente', 'factura').prefetch_related('items').get(id=orden_id)
         except Orden.DoesNotExist:
@@ -288,6 +349,10 @@ class FacturaPDFAPIView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ComprasAPIView(View):
     def get(self, request):
+        permission_error = _permission_error_response(request, PERM_MANAGE_PURCHASES)
+        if permission_error:
+            return permission_error
+
         compras = Compra.objects.select_related('proveedor').all()
         serializer = CompraReadSerializer(compras, many=True)
         return success_response(
@@ -296,6 +361,10 @@ class ComprasAPIView(View):
         )
 
     def post(self, request):
+        permission_error = _permission_error_response(request, PERM_MANAGE_PURCHASES)
+        if permission_error:
+            return permission_error
+
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
@@ -316,6 +385,10 @@ class ComprasAPIView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class CompraEstadoAPIView(View):
     def patch(self, request, compra_id):
+        permission_error = _permission_error_response(request, PERM_MANAGE_PURCHASES)
+        if permission_error:
+            return permission_error
+
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:

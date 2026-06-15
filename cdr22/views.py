@@ -11,10 +11,20 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.db.models import Avg, Count, F, Sum
 from django.utils import timezone
+from functools import wraps
 import secrets
 from cdr22.forms import ConfiguracionSistemaForm, PerfilUsuarioForm, UsuarioCreateForm
 from cdr22.models import Producto, Categoria, Cliente, Compra, Orden, Proveedor
-from cdr22.roles import ROLE_NAMES, USER_MANAGER_ROLES
+from cdr22.roles import (
+    PERM_MANAGE_CLIENTS,
+    PERM_MANAGE_INVENTORY,
+    PERM_MANAGE_PURCHASES,
+    PERM_MANAGE_SALES,
+    PERM_MANAGE_SETTINGS,
+    PERM_MANAGE_USERS,
+    ROLE_NAMES,
+    user_can,
+)
 from cdr22.serializers import CompraCreateSerializer
 from cdr22.services.configuracion import get_configuracion_sistema
 from cdr22.services.compras import CompraEstadoError, anular_compra, cambiar_estado_compra, crear_compra
@@ -49,10 +59,19 @@ def _compra_payload_from_post(post_data):
         'items': items,
     }
 
-def _can_manage_users(user):
-    return user.is_authenticated and (
-        user.is_superuser or user.groups.filter(name__in=USER_MANAGER_ROLES).exists()
-    )
+def _permission_required(permission):
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapped(request, *args, **kwargs):
+            if user_can(request.user, permission):
+                return view_func(request, *args, **kwargs)
+
+            messages.error(request, 'No tienes permisos para acceder a esta sección.')
+            return redirect('home')
+
+        return wrapped
+
+    return decorator
 
 def _ensure_roles():
     for role_name in ROLE_NAMES:
@@ -190,6 +209,7 @@ def testing(request):
 
 """ Productos Views """
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def categorias_index(request):
     categorias_list = Categoria.objects.annotate(productos_count=Count('productos')).order_by('nombre')
     paginator = Paginator(categorias_list, 10)
@@ -199,6 +219,7 @@ def categorias_index(request):
     return render(request, 'dashboard/categorias/index.html', {'categorias': categorias})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def categorias_crear(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre', '').strip()
@@ -223,6 +244,7 @@ def categorias_crear(request):
     return render(request, 'dashboard/categorias/crear.html')
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def categorias_editar(request, categoria_id):
     categoria = get_object_or_404(Categoria, id=categoria_id)
 
@@ -243,6 +265,7 @@ def categorias_editar(request, categoria_id):
     return render(request, 'dashboard/categorias/editar.html', {'categoria': categoria})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def categorias_eliminar(request, categoria_id):
     categoria = get_object_or_404(
         Categoria.objects.annotate(productos_count=Count('productos')),
@@ -259,6 +282,7 @@ def categorias_eliminar(request, categoria_id):
     })
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def productos_index(request):
     productos_list = Producto.objects.all()
     paginator = Paginator(productos_list, 10)
@@ -268,6 +292,7 @@ def productos_index(request):
     return render(request, 'dashboard/productos/index.html', {'productos': productos})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def productos_crear(request):
     if request.method == 'POST':
         sku = request.POST.get('sku')
@@ -308,6 +333,7 @@ def productos_crear(request):
     return render(request, 'dashboard/productos/crear.html', {'categorias': categorias})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def productos_editar(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     
@@ -354,6 +380,7 @@ def productos_editar(request, producto_id):
     })
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_INVENTORY)
 def productos_eliminar(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     
@@ -373,10 +400,12 @@ def productos_eliminar(request, producto_id):
     })
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_SALES)
 def pos(request):
     return render(request, 'dashboard/pos/index.html')
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_SALES)
 def ventas_index(request):
     ventas_list = Orden.objects.select_related('cliente', 'factura').prefetch_related('items').all()
     paginator = Paginator(ventas_list, 10)
@@ -386,6 +415,7 @@ def ventas_index(request):
     return render(request, 'dashboard/ventas/index.html', {'ventas': ventas})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_SALES)
 def ventas_detalle(request, venta_id):
     venta = get_object_or_404(
         Orden.objects.select_related('cliente', 'factura').prefetch_related('items'),
@@ -395,6 +425,7 @@ def ventas_detalle(request, venta_id):
     return render(request, 'dashboard/ventas/detalle.html', {'venta': venta})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_CLIENTS)
 def clientes_index(request):
     clientes_list = Cliente.objects.all()
     paginator = Paginator(clientes_list, 10)
@@ -404,6 +435,7 @@ def clientes_index(request):
     return render(request, 'dashboard/clientes/index.html', {'clientes': clientes})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_CLIENTS)
 def clientes_crear(request):
     if request.method == 'POST':
         cedula = request.POST.get('cedula')
@@ -429,6 +461,7 @@ def clientes_crear(request):
     return render(request, 'dashboard/clientes/crear.html')
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_CLIENTS)
 def clientes_editar(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)
     
@@ -459,6 +492,7 @@ def clientes_editar(request, cliente_id):
     })
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_CLIENTS)
 def clientes_eliminar(request, cliente_id):
     cliente = get_object_or_404(Cliente, id=cliente_id)
     
@@ -471,6 +505,7 @@ def clientes_eliminar(request, cliente_id):
     })
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def proveedores_index(request):
     proveedores_list = Proveedor.objects.annotate(compras_count=Count('compras')).order_by('nombre')
     paginator = Paginator(proveedores_list, 10)
@@ -480,6 +515,7 @@ def proveedores_index(request):
     return render(request, 'dashboard/proveedores/index.html', {'proveedores': proveedores})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def proveedores_crear(request):
     if request.method == 'POST':
         Proveedor.objects.create(
@@ -495,6 +531,7 @@ def proveedores_crear(request):
     return render(request, 'dashboard/proveedores/crear.html')
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def proveedores_editar(request, proveedor_id):
     proveedor = get_object_or_404(Proveedor, id=proveedor_id)
 
@@ -512,6 +549,7 @@ def proveedores_editar(request, proveedor_id):
     return render(request, 'dashboard/proveedores/editar.html', {'proveedor': proveedor})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def proveedores_eliminar(request, proveedor_id):
     proveedor = get_object_or_404(
         Proveedor.objects.annotate(compras_count=Count('compras')),
@@ -528,11 +566,8 @@ def proveedores_eliminar(request, proveedor_id):
     })
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_USERS)
 def usuarios_index(request):
-    if not _can_manage_users(request.user):
-        messages.error(request, 'No tienes permisos para gestionar usuarios.')
-        return redirect('home')
-
     usuarios_list = User.objects.prefetch_related('groups').order_by('username')
     paginator = Paginator(usuarios_list, 10)
     page_number = request.GET.get('page')
@@ -541,11 +576,8 @@ def usuarios_index(request):
     return render(request, 'dashboard/usuarios/index.html', {'usuarios': usuarios})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_USERS)
 def usuarios_crear(request):
-    if not _can_manage_users(request.user):
-        messages.error(request, 'No tienes permisos para gestionar usuarios.')
-        return redirect('home')
-
     _ensure_roles()
 
     if request.method == 'POST':
@@ -580,11 +612,8 @@ def usuarios_crear(request):
     return render(request, 'dashboard/usuarios/crear.html', {'form': form})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_SETTINGS)
 def configuracion_general(request):
-    if not _can_manage_users(request.user):
-        messages.error(request, 'No tienes permisos para gestionar la configuración.')
-        return redirect('home')
-
     configuracion = get_configuracion_sistema()
 
     if request.method == 'POST':
@@ -600,6 +629,7 @@ def configuracion_general(request):
     return render(request, 'dashboard/configuracion/general.html', {'form': form})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def compras_index(request):
     compras_list = Compra.objects.select_related('proveedor').prefetch_related('items').all()
     paginator = Paginator(compras_list, 10)
@@ -609,6 +639,7 @@ def compras_index(request):
     return render(request, 'dashboard/compras/index.html', {'compras': compras})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def compras_detalle(request, compra_id):
     compra = get_object_or_404(
         Compra.objects.select_related('proveedor').prefetch_related('items__producto'),
@@ -618,6 +649,7 @@ def compras_detalle(request, compra_id):
     return render(request, 'dashboard/compras/detalle.html', {'compra': compra})
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def compras_crear(request):
     productos = Producto.objects.filter(estado='activo').order_by('nombre')
     proveedores = Proveedor.objects.all()
@@ -643,6 +675,7 @@ def compras_crear(request):
     })
 
 @login_required(login_url='login')
+@_permission_required(PERM_MANAGE_PURCHASES)
 def compras_cambiar_estado(request, compra_id):
     compra = get_object_or_404(Compra, id=compra_id)
 

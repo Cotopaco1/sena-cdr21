@@ -90,6 +90,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'cdr22.context_processors.configuracion_sistema',
+                'cdr22.context_processors.permisos_usuario',
             ],
         },
     },

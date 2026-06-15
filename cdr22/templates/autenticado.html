@@ -46,55 +46,71 @@
                             Inicio
                         </a>
                     </li>
-                    <li class="auth_nav_group">
-                        <button type="button" class="auth_nav_group_button">
-                            <!-- Icono -->
-                            {% include "components/icons/product.html" %}
-                            Inventario
-                            {% include "components/icons/chevron_down.html" %}
-                        </button>
-                        <div class="auth_nav_group_menu">
-                            <a class="auth_nav_group_link" href="{% url 'productos_index' %}">Productos</a>
-                            <a class="auth_nav_group_link" href="{% url 'categorias_index' %}">Categorías</a>
-                        </div>
-                    </li>
-                    <li class="auth_nav_group">
-                        <button type="button" class="auth_nav_group_button">
-                            <!-- Icono -->
-                            {% include "components/icons/invoice.html" %}
-                            Compras
-                            {% include "components/icons/chevron_down.html" %}
-                        </button>
-                        <div class="auth_nav_group_menu">
-                            <a class="auth_nav_group_link" href="{% url 'proveedores_index' %}">Proveedores</a>
-                            <a class="auth_nav_group_link" href="{% url 'compras_index' %}">Lista de compras</a>
-                        </div>
-                    </li>
-                    <li class="auth_nav_group">
-                        <button type="button" class="auth_nav_group_button">
-                            <!-- Icono -->
-                            {% include "components/icons/badge_dollar_sign.html" %}
-                            Ventas
-                            {% include "components/icons/chevron_down.html" %}
-                        </button>
-                        <div class="auth_nav_group_menu">
-                            <a class="auth_nav_group_link" href="{% url 'pos' %}">Punto de venta</a>
-                            <a class="auth_nav_group_link" href="{% url 'clientes_index' %}">Clientes</a>
-                            <a class="auth_nav_group_link" href="{% url 'ventas_index' %}">Lista de ventas</a>
-                        </div>
-                    </li>
-                    <li class="auth_nav_group">
-                        <button type="button" class="auth_nav_group_button">
-                            <!-- Icono -->
-                            {% include "components/icons/settings.html" %}
-                            Configuraciones
-                            {% include "components/icons/chevron_down.html" %}
-                        </button>
-                        <div class="auth_nav_group_menu">
-                            <a class="auth_nav_group_link" href="{% url 'configuracion_general' %}">General</a>
-                            <a class="auth_nav_group_link" href="{% url 'usuarios_index' %}">Usuarios</a>
-                        </div>
-                    </li>
+                    {% if permisos_usuario.can_manage_inventory %}
+                        <li class="auth_nav_group">
+                            <button type="button" class="auth_nav_group_button">
+                                <!-- Icono -->
+                                {% include "components/icons/product.html" %}
+                                Inventario
+                                {% include "components/icons/chevron_down.html" %}
+                            </button>
+                            <div class="auth_nav_group_menu">
+                                <a class="auth_nav_group_link" href="{% url 'productos_index' %}">Productos</a>
+                                <a class="auth_nav_group_link" href="{% url 'categorias_index' %}">Categorías</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if permisos_usuario.can_manage_purchases %}
+                        <li class="auth_nav_group">
+                            <button type="button" class="auth_nav_group_button">
+                                <!-- Icono -->
+                                {% include "components/icons/invoice.html" %}
+                                Compras
+                                {% include "components/icons/chevron_down.html" %}
+                            </button>
+                            <div class="auth_nav_group_menu">
+                                <a class="auth_nav_group_link" href="{% url 'proveedores_index' %}">Proveedores</a>
+                                <a class="auth_nav_group_link" href="{% url 'compras_index' %}">Lista de compras</a>
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if permisos_usuario.can_manage_sales or permisos_usuario.can_manage_clients %}
+                        <li class="auth_nav_group">
+                            <button type="button" class="auth_nav_group_button">
+                                <!-- Icono -->
+                                {% include "components/icons/badge_dollar_sign.html" %}
+                                Ventas
+                                {% include "components/icons/chevron_down.html" %}
+                            </button>
+                            <div class="auth_nav_group_menu">
+                                {% if permisos_usuario.can_manage_sales %}
+                                    <a class="auth_nav_group_link" href="{% url 'pos' %}">Punto de venta</a>
+                                    <a class="auth_nav_group_link" href="{% url 'ventas_index' %}">Lista de ventas</a>
+                                {% endif %}
+                                {% if permisos_usuario.can_manage_clients %}
+                                    <a class="auth_nav_group_link" href="{% url 'clientes_index' %}">Clientes</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endif %}
+                    {% if permisos_usuario.can_manage_settings or permisos_usuario.can_manage_users %}
+                        <li class="auth_nav_group">
+                            <button type="button" class="auth_nav_group_button">
+                                <!-- Icono -->
+                                {% include "components/icons/settings.html" %}
+                                Configuraciones
+                                {% include "components/icons/chevron_down.html" %}
+                            </button>
+                            <div class="auth_nav_group_menu">
+                                {% if permisos_usuario.can_manage_settings %}
+                                    <a class="auth_nav_group_link" href="{% url 'configuracion_general' %}">General</a>
+                                {% endif %}
+                                {% if permisos_usuario.can_manage_users %}
+                                    <a class="auth_nav_group_link" href="{% url 'usuarios_index' %}">Usuarios</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endif %}
                 </ul>
             </nav>
             
