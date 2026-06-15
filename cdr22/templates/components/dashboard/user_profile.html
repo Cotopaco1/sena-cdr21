@@ -30,7 +30,7 @@
     </button>
 
     <div class="auth_user_menu_panel">
-        <span class="auth_user_menu_item text-gray-400 cursor-not-allowed">Mi perfil</span>
+        <a class="auth_user_menu_item" href="{% url 'mi_perfil' %}">Mi perfil</a>
         <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit" class="auth_user_menu_item auth_user_menu_item_danger">

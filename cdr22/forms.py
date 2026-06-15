@@ -69,6 +69,23 @@ class UsuarioCreateForm(forms.Form):
         return cleaned_data
 
 
+class PerfilUsuarioForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        labels = {
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo electrónico',
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '').strip()
+        if email and User.objects.exclude(pk=self.instance.pk).filter(email__iexact=email).exists():
+            raise ValidationError('Ya existe otro usuario con este correo electrónico.')
+        return email
+
+
 class ConfiguracionSistemaForm(forms.ModelForm):
     class Meta:
         model = ConfiguracionSistema

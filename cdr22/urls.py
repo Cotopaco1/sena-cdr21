@@ -21,6 +21,7 @@ urlpatterns =[
     path ('login-django', LoginView.as_view(template_name='login.html'), name='logindjango'),
     
     path('dashboard/home', views.home, name='home'),
+    path('dashboard/mi-perfil/', views.mi_perfil, name='mi_perfil'),
     path('dashboard/categorias/', views.categorias_index, name='categorias_index'),
     path('dashboard/categorias/crear/', views.categorias_crear, name='categorias_crear'),
     path('dashboard/categorias/editar/<int:categoria_id>/', views.categorias_editar, name='categorias_editar'),

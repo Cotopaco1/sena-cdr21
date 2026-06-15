@@ -1,0 +1,200 @@
+{% extends 'autenticado.html' %}
+
+{% block header_title %} Mi Perfil {% endblock header_title %}
+
+{% block contenido %}
+<div class="dashboard-container">
+    {% include 'components/dashboard/page_header.html' with titulo="Mi Perfil" descripcion="Administre su información personal y credenciales de acceso" %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <aside class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h2 class="section-title">Cuenta</h2>
+                <p class="section-description">Información del usuario autenticado</p>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-semibold text-xl">
+                        {% if user.first_name %}
+                            {{ user.first_name|slice:":1"|upper }}
+                        {% else %}
+                            {{ user.username|slice:":1"|upper }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">
+                            {% if user.get_full_name %}
+                                {{ user.get_full_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                        </p>
+                        <p class="text-sm text-gray-500">{{ user.email|default:"Sin correo registrado" }}</p>
+                    </div>
+                </div>
+
+                <dl class="space-y-4">
+                    <div>
+                        <dt class="summary-label">Usuario</dt>
+                        <dd class="summary-value">{{ user.username }}</dd>
+                    </div>
+                    <div>
+                        <dt class="summary-label">Rol</dt>
+                        <dd class="mt-2 flex flex-wrap gap-2">
+                            {% for role_name in role_names %}
+                                <span class="status-badge status-badge-muted">{{ role_name }}</span>
+                            {% empty %}
+                                <span class="text-sm text-gray-400">Sin rol asignado</span>
+                            {% endfor %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="summary-label">Estado</dt>
+                        <dd class="mt-2">
+                            {% if user.is_active %}
+                                <span class="status-badge status-badge-success">Activo</span>
+                            {% else %}
+                                <span class="status-badge status-badge-danger">Inactivo</span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="summary-label">Último acceso</dt>
+                        <dd class="summary-value">
+                            {% if user.last_login %}
+                                {{ user.last_login|date:"Y-m-d H:i" }}
+                            {% else %}
+                                Sin registro
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </aside>
+
+        <section class="lg:col-span-2 space-y-6">
+            <form method="POST" class="dashboard-card">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="profile">
+
+                <div class="dashboard-card-header">
+                    <h2 class="section-title">Datos personales</h2>
+                    <p class="section-description">Actualice su nombre y correo de contacto</p>
+                </div>
+                <div class="dashboard-card-body">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="flex flex-col">
+                            <label class="formulario_label mb-2" for="{{ profile_form.first_name.id_for_label }}">Nombre</label>
+                            <input
+                                type="text"
+                                name="first_name"
+                                id="{{ profile_form.first_name.id_for_label }}"
+                                value="{{ profile_form.first_name.value|default:'' }}"
+                                class="formulario_input"
+                                maxlength="150"
+                            >
+                            {% if profile_form.first_name.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ profile_form.first_name.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="formulario_label mb-2" for="{{ profile_form.last_name.id_for_label }}">Apellido</label>
+                            <input
+                                type="text"
+                                name="last_name"
+                                id="{{ profile_form.last_name.id_for_label }}"
+                                value="{{ profile_form.last_name.value|default:'' }}"
+                                class="formulario_input"
+                                maxlength="150"
+                            >
+                            {% if profile_form.last_name.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ profile_form.last_name.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="flex flex-col md:col-span-2">
+                            <label class="formulario_label mb-2" for="{{ profile_form.email.id_for_label }}">Correo electrónico</label>
+                            <input
+                                type="email"
+                                name="email"
+                                id="{{ profile_form.email.id_for_label }}"
+                                value="{{ profile_form.email.value|default:'' }}"
+                                class="formulario_input"
+                            >
+                            {% if profile_form.email.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ profile_form.email.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-md btn-success">
+                        Guardar perfil
+                    </button>
+                </div>
+            </form>
+
+            <form method="POST" class="dashboard-card">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="password">
+
+                <div class="dashboard-card-header">
+                    <h2 class="section-title">Cambiar contraseña</h2>
+                    <p class="section-description">Ingrese su contraseña actual y defina una nueva</p>
+                </div>
+                <div class="dashboard-card-body">
+                    <div class="space-y-6 mb-6">
+                        <div class="flex flex-col">
+                            <label class="formulario_label mb-2" for="{{ password_form.old_password.id_for_label }}">Contraseña actual</label>
+                            <input
+                                type="password"
+                                name="old_password"
+                                id="{{ password_form.old_password.id_for_label }}"
+                                class="formulario_input"
+                                autocomplete="current-password"
+                            >
+                            {% if password_form.old_password.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ password_form.old_password.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="flex flex-col">
+                                <label class="formulario_label mb-2" for="{{ password_form.new_password1.id_for_label }}">Nueva contraseña</label>
+                                <input
+                                    type="password"
+                                    name="new_password1"
+                                    id="{{ password_form.new_password1.id_for_label }}"
+                                    class="formulario_input"
+                                    autocomplete="new-password"
+                                >
+                                {% if password_form.new_password1.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ password_form.new_password1.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="flex flex-col">
+                                <label class="formulario_label mb-2" for="{{ password_form.new_password2.id_for_label }}">Confirmar contraseña</label>
+                                <input
+                                    type="password"
+                                    name="new_password2"
+                                    id="{{ password_form.new_password2.id_for_label }}"
+                                    class="formulario_input"
+                                    autocomplete="new-password"
+                                >
+                                {% if password_form.new_password2.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ password_form.new_password2.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-md btn-primary">
+                        Actualizar contraseña
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock contenido %}

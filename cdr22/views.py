@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group, User
 from django.http import JsonResponse
@@ -11,7 +12,7 @@ from django.db import IntegrityError
 from django.db.models import Avg, Count, F, Sum
 from django.utils import timezone
 import secrets
-from cdr22.forms import ConfiguracionSistemaForm, UsuarioCreateForm
+from cdr22.forms import ConfiguracionSistemaForm, PerfilUsuarioForm, UsuarioCreateForm
 from cdr22.models import Producto, Categoria, Cliente, Compra, Orden, Proveedor
 from cdr22.roles import ROLE_NAMES, USER_MANAGER_ROLES
 from cdr22.serializers import CompraCreateSerializer
@@ -66,6 +67,12 @@ def _send_password_setup_email(request, user):
             email_template_name='registration/password_setup_email.html',
             subject_template_name='registration/password_setup_subject.txt',
         )
+
+def _user_role_names(user):
+    roles = list(user.groups.order_by('name').values_list('name', flat=True))
+    if user.is_superuser and 'Superusuario' not in roles:
+        roles.insert(0, 'Superusuario')
+    return roles
 
 def principal (request):
     return render(request, 'landing.html')
@@ -135,6 +142,48 @@ def home(request):
     }
 
     return render(request, 'dashboard/home.html', context)
+
+@login_required(login_url='login')
+def mi_perfil(request):
+    user = request.user
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'profile':
+            profile_form = PerfilUsuarioForm(request.POST, instance=user)
+            password_form = PasswordChangeForm(user)
+
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Perfil actualizado correctamente.')
+                return redirect('mi_perfil')
+
+            messages.error(request, 'No se pudo actualizar el perfil. Revise los campos marcados.')
+        elif action == 'password':
+            profile_form = PerfilUsuarioForm(instance=user)
+            password_form = PasswordChangeForm(user, request.POST)
+
+            if password_form.is_valid():
+                updated_user = password_form.save()
+                update_session_auth_hash(request, updated_user)
+                messages.success(request, 'Contraseña actualizada correctamente.')
+                return redirect('mi_perfil')
+
+            messages.error(request, 'No se pudo actualizar la contraseña. Revise los campos marcados.')
+        else:
+            profile_form = PerfilUsuarioForm(instance=user)
+            password_form = PasswordChangeForm(user)
+            messages.error(request, 'Acción no válida.')
+    else:
+        profile_form = PerfilUsuarioForm(instance=user)
+        password_form = PasswordChangeForm(user)
+
+    return render(request, 'dashboard/perfil/mi_perfil.html', {
+        'profile_form': profile_form,
+        'password_form': password_form,
+        'role_names': _user_role_names(user),
+    })
 
 def testing(request):
     return render(request, 'testing.html')
