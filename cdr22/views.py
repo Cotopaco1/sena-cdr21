@@ -94,6 +94,9 @@ def _user_role_names(user):
     return roles
 
 def principal (request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
     return render(request, 'landing.html')
 
 """ Auth Views """

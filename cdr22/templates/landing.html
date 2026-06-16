@@ -6,332 +6,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% tailwind_css %}
-    <title>CDR21 - Sistema de Gestión Empresarial</title>
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .feature-card {
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-    </style>
+    <title>{{ configuracion_sistema.nombre_empresa|default:"CDR21" }} - POS e inventario</title>
 </head>
-<body class="bg-white">
-    <!-- Navigation -->
-    <nav class="fixed w-full bg-white shadow-lg z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                        CDR
-                    </div>
-                    <span class="text-xl font-bold gradient-text">CDR21</span>
-                </div>
-                <div class="hidden md:flex gap-8 items-center">
-                    <a href="#features" class="text-gray-600 hover:text-gray-900 font-medium">Características</a>
-                    <a href="#benefits" class="text-gray-600 hover:text-gray-900 font-medium">Beneficios</a>
-                    <a href="/login" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">Iniciar Sesión</a>
-                </div>
-                <div class="md:hidden">
-                    <a href="/login" class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm">Iniciar Sesión</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="gradient-bg text-white pt-32 pb-20 px-4">
-        <div class="max-w-6xl mx-auto text-center">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6">
-                Gestiona tu Empresa de Manera Inteligente
-            </h1>
-            <p class="text-xl md:text-2xl mb-8 opacity-90">
-                CDR21: La solución integral para empresas medianas que desean optimizar sus operaciones comerciales
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/login" class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg">
-                    Acceder al Sistema
-                </a>
-                <button class="bg-white text-purple-600 px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-50">
-                    Conocer Más
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="py-20 px-4 bg-gray-50">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-4 gradient-text">
-                Características Principales
-            </h2>
-            <p class="text-center text-gray-600 mb-16 text-lg">
-                Todo lo que necesitas para administrar tu negocio en una sola plataforma
-            </p>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Feature 1: Inventario -->
-                <div class="feature-card bg-white p-8 rounded-xl border border-gray-200">
-                    <div class="w-14 h-14 gradient-bg rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">Gestión de Inventario</h3>
-                    <p class="text-gray-600">
-                        Control total de tu inventario en tiempo real. Monitorea stock, categorías de productos y niveles de disponibilidad.
-                    </p>
-                </div>
-
-                <!-- Feature 2: Clientes -->
-                <div class="feature-card bg-white p-8 rounded-xl border border-gray-200">
-                    <div class="w-14 h-14 gradient-bg rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">Gestión de Clientes</h3>
-                    <p class="text-gray-600">
-                        Mantén un registro completo de tus clientes con contactos, historial de compras y datos de identificación.
-                    </p>
-                </div>
-
-                <!-- Feature 3: Facturación -->
-                <div class="feature-card bg-white p-8 rounded-xl border border-gray-200">
-                    <div class="w-14 h-14 gradient-bg rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54h3.54l3.71-4.36L12.5 7z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">Facturación Digital</h3>
-                    <p class="text-gray-600">
-                        Genera facturas profesionales y automatiza tu proceso de facturación con registro completo de transacciones.
-                    </p>
-                </div>
-
-                <!-- Feature 4: Punto de Venta -->
-                <div class="feature-card bg-white p-8 rounded-xl border border-gray-200">
-                    <div class="w-14 h-14 gradient-bg rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17 18a5 5 0 0 0-10 0M19 2H5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3zm-7 6a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">Punto de Venta (POS)</h3>
-                    <p class="text-gray-600">
-                        Sistema POS completo para procesar ventas rápidamente. Perfecta integración con tu inventario.
-                    </p>
-                </div>
-
-                <!-- Feature 5: Gestión de Usuarios -->
-                <div class="feature-card bg-white p-8 rounded-xl border border-gray-200">
-                    <div class="w-14 h-14 gradient-bg rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">Control de Usuarios</h3>
-                    <p class="text-gray-600">
-                        Gestiona roles y permisos de usuarios dentro del sistema. Controla quién puede acceder a qué información.
-                    </p>
-                </div>
-
-                <!-- Feature 6: Reportes -->
-                <div class="feature-card bg-white p-8 rounded-xl border border-gray-200">
-                    <div class="w-14 h-14 gradient-bg rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-8-2h2v-2h-2v2zm0-4h2V7h-2v6z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-gray-900">Reportes Detallados</h3>
-                    <p class="text-gray-600">
-                        Acceso a reportes analíticos y dashboards que te ayudan a tomar decisiones informadas.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Benefits Section -->
-    <section id="benefits" class="py-20 px-4">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-4 gradient-text">
-                ¿Por qué elegir CDR21?
-            </h2>
-            <p class="text-center text-gray-600 mb-16 text-lg">
-                Optimiza tu empresa mediada con la mejor solución del mercado
-            </p>
-
-            <div class="grid md:grid-cols-2 gap-12">
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">Fácil de Usar</h3>
-                        <p class="text-gray-600">Interfaz intuitiva que requiere mínima capacitación para tus colaboradores.</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">Tiempo Real</h3>
-                        <p class="text-gray-600">Información actualizada al instante para tomar decisiones rápidas.</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">Seguridad</h3>
-                        <p class="text-gray-600">Encriptación y autenticación robusta para proteger tus datos empresariales.</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">Escalable</h3>
-                        <p class="text-gray-600">Crece con tu negocio sin necesidad de cambiar de plataforma.</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">Soporte Dedicado</h3>
-                        <p class="text-gray-600">Equipo de soporte disponible para ayudarte cuando lo necesites.</p>
-                    </div>
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">Integración Completa</h3>
-                        <p class="text-gray-600">Todos los módulos trabajan juntos de forma seamless.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="gradient-bg text-white py-16 px-4">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-bold mb-6">
-                ¿Listo para transformar tu negocio?
-            </h2>
-            <p class="text-xl mb-8 opacity-90">
-                Accede a CDR21 hoy mismo y comienza a optimizar tus operaciones comerciales
-            </p>
-            <a href="/login" class="inline-block bg-white text-purple-600 px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-50">
-                Iniciar Sesión Ahora
+<body class="landing-page">
+    <header class="landing-header">
+        <div class="landing-header-inner">
+            <a href="{% url 'principal' %}" class="landing-brand" aria-label="Inicio">
+                <span class="landing-brand-logo">
+                    {% if configuracion_sistema.logo %}
+                        <img src="{{ configuracion_sistema.logo.url }}" alt="{{ configuracion_sistema.nombre_empresa }}">
+                    {% else %}
+                        <img src="{% static 'img/logo_las_motos.jpeg' %}" alt="{{ configuracion_sistema.nombre_empresa|default:'CDR21' }}">
+                    {% endif %}
+                </span>
+                <span class="landing-brand-text">
+                    <span>{{ configuracion_sistema.nombre_empresa|default:"CDR21" }}</span>
+                    <small>POS e inventario</small>
+                </span>
             </a>
-        </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12 px-4">
-        <div class="max-w-6xl mx-auto">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <div>
-                    <h4 class="font-bold mb-4 flex items-center gap-2">
-                        <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-sm">CDR</div>
-                        CDR21
-                    </h4>
-                    <p class="text-gray-400 text-sm">Solución integral de gestión empresarial para empresas medianas.</p>
+            <nav class="landing-nav" aria-label="Principal">
+                <a href="#modulos">Módulos</a>
+                <a href="#operacion">Operación</a>
+                <a href="{% url 'login' %}" class="landing-login-link">Ingresar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="landing-hero">
+            <div class="landing-container landing-hero-grid">
+                <div class="landing-hero-copy">
+                    <p class="landing-eyebrow">Sistema comercial para operación diaria</p>
+                    <h1>{{ configuracion_sistema.nombre_empresa|default:"CDR21" }}</h1>
+                    <p class="landing-hero-text">
+                        Punto de venta, inventario, compras, clientes y facturación en una sola herramienta para trabajar con más orden y menos pasos manuales.
+                    </p>
+                    <div class="landing-actions">
+                        <a href="{% url 'login' %}" class="landing-button landing-button-primary">Iniciar sesión</a>
+                        <a href="#modulos" class="landing-button landing-button-secondary">Ver módulos</a>
+                    </div>
+                    <dl class="landing-metrics">
+                        <div>
+                            <dt>POS</dt>
+                            <dd>Ventas rápidas</dd>
+                        </div>
+                        <div>
+                            <dt>PDF</dt>
+                            <dd>Facturas listas</dd>
+                        </div>
+                        <div>
+                            <dt>Roles</dt>
+                            <dd>Acceso por perfil</dd>
+                        </div>
+                    </dl>
                 </div>
-                <div>
-                    <h4 class="font-bold mb-4">Producto</h4>
-                    <ul class="text-gray-400 text-sm space-y-2">
-                        <li><a href="#features" class="hover:text-white">Características</a></li>
-                        <li><a href="#benefits" class="hover:text-white">Beneficios</a></li>
-                        <li><a href="/login" class="hover:text-white">Acceso</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4">Empresa</h4>
-                    <ul class="text-gray-400 text-sm space-y-2">
-                        <li><a href="#" class="hover:text-white">Acerca de</a></li>
-                        <li><a href="#" class="hover:text-white">Blog</a></li>
-                        <li><a href="#" class="hover:text-white">Contacto</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4">Legal</h4>
-                    <ul class="text-gray-400 text-sm space-y-2">
-                        <li><a href="#" class="hover:text-white">Privacidad</a></li>
-                        <li><a href="#" class="hover:text-white">Términos</a></li>
-                        <li><a href="#" class="hover:text-white">Cookies</a></li>
-                    </ul>
+
+                <div class="landing-product-shot" aria-label="Vista previa del sistema">
+                    <div class="landing-window">
+                        <div class="landing-window-bar">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="landing-dashboard-preview">
+                            <aside>
+                                <strong>CDR21</strong>
+                                <span>Inventario</span>
+                                <span>Compras</span>
+                                <span class="is-active">POS</span>
+                                <span>Clientes</span>
+                            </aside>
+                            <section>
+                                <div class="landing-preview-heading">
+                                    <div>
+                                        <span>Venta actual</span>
+                                        <strong>$ 1.248.000</strong>
+                                    </div>
+                                    <em>Factura PDF</em>
+                                </div>
+                                <div class="landing-preview-search">Buscar producto por SKU, nombre o marca</div>
+                                <div class="landing-preview-list">
+                                    <div>
+                                        <span>Filtro aceite</span>
+                                        <strong>2 x $ 48.000</strong>
+                                    </div>
+                                    <div>
+                                        <span>Kit arrastre</span>
+                                        <strong>1 x $ 220.000</strong>
+                                    </div>
+                                    <div>
+                                        <span>Casco integral</span>
+                                        <strong>1 x $ 380.000</strong>
+                                    </div>
+                                </div>
+                                <div class="landing-preview-total">
+                                    <span>Total</span>
+                                    <strong>$ 696.000</strong>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-400 text-sm">&copy; 2026 CDR21. Todos los derechos reservados.</p>
-                <div class="flex gap-4 mt-4 md:mt-0">
-                    <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
-                    <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
-                    <a href="#" class="text-gray-400 hover:text-white">LinkedIn</a>
+        </section>
+
+        <section id="modulos" class="landing-section">
+            <div class="landing-container">
+                <div class="landing-section-heading">
+                    <p class="landing-eyebrow">Módulos principales</p>
+                    <h2>Las partes clave del negocio conectadas entre sí</h2>
+                </div>
+
+                <div class="landing-module-grid">
+                    <article class="landing-module-card">
+                        <span class="landing-module-icon">{% include "components/icons/badge_dollar_sign.html" %}</span>
+                        <h3>Punto de venta</h3>
+                        <p>Registra ventas, selecciona cliente, actualiza stock y genera la factura desde el mismo flujo.</p>
+                    </article>
+                    <article class="landing-module-card">
+                        <span class="landing-module-icon">{% include "components/icons/product.html" %}</span>
+                        <h3>Inventario</h3>
+                        <p>Administra productos, categorías, precios, stock mínimo y disponibilidad operativa.</p>
+                    </article>
+                    <article class="landing-module-card">
+                        <span class="landing-module-icon">{% include "components/icons/invoice.html" %}</span>
+                        <h3>Compras</h3>
+                        <p>Controla proveedores, compras en espera, compras completadas y aplicación de stock.</p>
+                    </article>
+                    <article class="landing-module-card">
+                        <span class="landing-module-icon">{% include "components/icons/users.html" %}</span>
+                        <h3>Clientes y usuarios</h3>
+                        <p>Gestiona clientes y controla el acceso interno con roles para administrador, gerente y vendedor.</p>
+                    </article>
                 </div>
             </div>
+        </section>
+
+        <section id="operacion" class="landing-section landing-section-muted">
+            <div class="landing-container landing-operations-grid">
+                <div>
+                    <p class="landing-eyebrow">Diseñado para trabajar</p>
+                    <h2>Una experiencia pensada para caja, inventario y administración</h2>
+                    <p class="landing-section-text">
+                        La interfaz prioriza velocidad y claridad: búsqueda de productos, totales visibles, estados de compras y permisos por módulo.
+                    </p>
+                </div>
+
+                <div class="landing-operation-list">
+                    <div>
+                        <strong>Ventas con factura</strong>
+                        <span>Generación de PDF y preparación para envío por correo.</span>
+                    </div>
+                    <div>
+                        <strong>Stock controlado</strong>
+                        <span>Compras completadas actualizan inventario de forma consistente.</span>
+                    </div>
+                    <div>
+                        <strong>Roles claros</strong>
+                        <span>El menú y las vistas se ajustan según el perfil del usuario.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="landing-cta">
+            <div class="landing-container landing-cta-inner">
+                <div>
+                    <p class="landing-eyebrow">Acceso al sistema</p>
+                    <h2>Entra al panel y continúa la operación.</h2>
+                </div>
+                <a href="{% url 'login' %}" class="landing-button landing-button-primary">Iniciar sesión</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="landing-footer">
+        <div class="landing-container landing-footer-inner">
+            <span>{{ configuracion_sistema.nombre_empresa|default:"CDR21" }}</span>
+            <span>POS, inventario, compras y facturación</span>
         </div>
     </footer>
 </body>
