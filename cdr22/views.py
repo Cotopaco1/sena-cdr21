@@ -101,6 +101,9 @@ def principal (request):
 
 """ Auth Views """
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == 'POST':
         # Si viene JSON (desde fetch)
            if request.content_type == 'application/json':

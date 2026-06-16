@@ -11,7 +11,10 @@ x-web-environment: &web-environment
   EMAIL_USE_SSL: ${EMAIL_USE_SSL:-False}
   EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
   EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+  EMAIL_TIMEOUT: ${EMAIL_TIMEOUT:-20}
   DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-no-reply@localhost}
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  DJANGO_LOG_LEVEL: ${DJANGO_LOG_LEVEL:-INFO}
 
 services:
   web:
@@ -19,7 +22,7 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     restart: unless-stopped
-    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-3} --timeout ${GUNICORN_TIMEOUT:-120}
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS:-3} --timeout ${GUNICORN_TIMEOUT:-120} --access-logfile - --error-logfile - --capture-output --log-level ${GUNICORN_LOG_LEVEL:-info}
     environment: *web-environment
     volumes:
       - cdr22-data:/data

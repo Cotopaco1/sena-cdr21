@@ -25,6 +25,10 @@ from .services.compras import CompraEstadoError, anular_compra, cambiar_estado_c
 from .services.facturas import enviar_factura_por_email, render_factura_pdf
 from .services.ventas import OrdenStockError, crear_orden_pos
 import json
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def _permission_error_response(request, permission):
@@ -300,6 +304,7 @@ class OrdenCreateAPIView(View):
                 enviar_factura_por_email(orden, base_url=base_url)
                 email_enviado = True
             except Exception as e:
+                logger.exception("No se pudo enviar la factura por email para la orden %s", orden.id)
                 email_error = str(e)
 
         data = {
