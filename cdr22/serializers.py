@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from decimal import Decimal
 from .models import Cliente, Compra, Orden, OrdenItem, Producto, Proveedor
+from .services.whatsapp import get_whatsapp_estado, normalizar_telefono_colombia
 
 
 class OrdenItemSerializer(serializers.ModelSerializer):
@@ -136,6 +137,7 @@ class OrdenPOSCreateSerializer(serializers.Serializer):
     total = serializers.DecimalField(max_digits=15, decimal_places=2, min_value=0)
     generar_factura_pdf = serializers.BooleanField(required=False, default=False)
     enviar_factura_email = serializers.BooleanField(required=False, default=False)
+    enviar_factura_whatsapp = serializers.BooleanField(required=False, default=False)
 
     def validate_items(self, value):
         if not value:
@@ -149,6 +151,19 @@ class OrdenPOSCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError({
                 'cliente.email': ['Ingrese el correo del cliente para enviar la factura.']
             })
+
+        if attrs.get('enviar_factura_whatsapp'):
+            whatsapp_estado = get_whatsapp_estado()
+            if not whatsapp_estado['listo_para_enviar']:
+                raise serializers.ValidationError({
+                    'whatsapp': ['WhatsApp no está completamente configurado.']
+                })
+
+            telefono = normalizar_telefono_colombia(cliente.get('telefono'))
+            if not telefono:
+                raise serializers.ValidationError({
+                    'cliente.telefono': ['Ingrese un celular colombiano válido para enviar por WhatsApp.']
+                })
 
         subtotal_calculado = sum(
             item['precio_unitario'] * item['cantidad']

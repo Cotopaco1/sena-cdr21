@@ -13,7 +13,7 @@ from django.db.models import Avg, Count, F, Sum
 from django.utils import timezone
 from functools import wraps
 import secrets
-from cdr22.forms import ConfiguracionSistemaForm, PerfilUsuarioForm, UsuarioCreateForm
+from cdr22.forms import ConfiguracionSistemaForm, ConfiguracionWhatsAppForm, PerfilUsuarioForm, UsuarioCreateForm
 from cdr22.models import Producto, Categoria, Cliente, Compra, Orden, Proveedor
 from cdr22.roles import (
     PERM_MANAGE_CLIENTS,
@@ -28,6 +28,7 @@ from cdr22.roles import (
 from cdr22.serializers import CompraCreateSerializer
 from cdr22.services.configuracion import get_configuracion_sistema
 from cdr22.services.compras import CompraEstadoError, anular_compra, cambiar_estado_compra, crear_compra
+from cdr22.services.whatsapp import get_whatsapp_estado
 import json
 
 
@@ -633,6 +634,26 @@ def configuracion_general(request):
         form = ConfiguracionSistemaForm(instance=configuracion)
 
     return render(request, 'dashboard/configuracion/general.html', {'form': form})
+
+@login_required(login_url='login')
+@_permission_required(PERM_MANAGE_SETTINGS)
+def configuracion_whatsapp(request):
+    configuracion = get_configuracion_sistema()
+
+    if request.method == 'POST':
+        form = ConfiguracionWhatsAppForm(request.POST, instance=configuracion)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Configuración de WhatsApp actualizada correctamente.')
+            return redirect('configuracion_whatsapp')
+        messages.error(request, 'No se pudo guardar la configuración de WhatsApp. Revise los campos marcados.')
+    else:
+        form = ConfiguracionWhatsAppForm(instance=configuracion)
+
+    return render(request, 'dashboard/configuracion/whatsapp.html', {
+        'form': form,
+        'whatsapp_estado': get_whatsapp_estado(),
+    })
 
 @login_required(login_url='login')
 @_permission_required(PERM_MANAGE_PURCHASES)

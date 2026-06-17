@@ -1,0 +1,79 @@
+{% extends 'autenticado.html' %}
+
+{% block header_title %} Configuración WhatsApp {% endblock header_title %}
+
+{% block contenido %}
+<div class="dashboard-container">
+    {% include 'components/dashboard/page_header.html' with titulo="Configuración WhatsApp" descripcion="Administre los datos no sensibles para enviar facturas por WhatsApp" %}
+
+    <form method="POST" class="dashboard-card p-8">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="mb-8 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+            El access token, WABA ID y Phone Number ID se configuran por variables de entorno. Aquí solo se guarda la plantilla y opciones operativas.
+        </div>
+
+        <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div class="summary-card">
+                <p class="summary-label">Variables de entorno</p>
+                <p class="summary-value">{% if whatsapp_estado.env_configurado %}Configuradas{% else %}Pendientes{% endif %}</p>
+            </div>
+            <div class="summary-card">
+                <p class="summary-label">Plantilla</p>
+                <p class="summary-value">{% if whatsapp_estado.plantilla_configurada %}Configurada{% else %}Pendiente{% endif %}</p>
+            </div>
+            <div class="summary-card">
+                <p class="summary-label">Estado</p>
+                <p class="summary-value">{% if whatsapp_estado.listo_para_enviar %}Listo{% else %}Incompleto{% endif %}</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 md:col-span-2">
+                <input type="checkbox" name="whatsapp_habilitado" id="{{ form.whatsapp_habilitado.id_for_label }}" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-700" {% if form.whatsapp_habilitado.value %}checked{% endif %}>
+                <div>
+                    <label class="formulario_label" for="{{ form.whatsapp_habilitado.id_for_label }}">Habilitar envío por WhatsApp</label>
+                    <p class="mt-1 text-sm text-gray-500">Activa esta opción cuando las variables de entorno y la plantilla aprobada estén listas.</p>
+                    {% if form.whatsapp_habilitado.errors %}<p class="mt-2 text-sm text-red-600">{{ form.whatsapp_habilitado.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="flex flex-col">
+                <label class="formulario_label mb-2" for="{{ form.whatsapp_template_factura.id_for_label }}">Nombre de plantilla de factura</label>
+                <input type="text" name="whatsapp_template_factura" id="{{ form.whatsapp_template_factura.id_for_label }}" value="{{ form.whatsapp_template_factura.value|default:'' }}" class="formulario_input" placeholder="factura_cliente">
+                <p class="mt-2 text-sm text-gray-500">Debe coincidir exactamente con el nombre aprobado en Meta Business.</p>
+                {% if form.whatsapp_template_factura.errors %}<p class="mt-2 text-sm text-red-600">{{ form.whatsapp_template_factura.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="flex flex-col">
+                <label class="formulario_label mb-2" for="{{ form.whatsapp_template_language.id_for_label }}">Idioma de plantilla *</label>
+                <input type="text" name="whatsapp_template_language" id="{{ form.whatsapp_template_language.id_for_label }}" value="{{ form.whatsapp_template_language.value|default:'es_CO' }}" class="formulario_input" required>
+                <p class="mt-2 text-sm text-gray-500">Ejemplo: es_CO, es o en_US.</p>
+                {% if form.whatsapp_template_language.errors %}<p class="mt-2 text-sm text-red-600">{{ form.whatsapp_template_language.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="flex flex-col md:col-span-2">
+                <label class="formulario_label mb-2" for="{{ form.whatsapp_numero_prueba.id_for_label }}">Número de prueba</label>
+                <input type="text" name="whatsapp_numero_prueba" id="{{ form.whatsapp_numero_prueba.id_for_label }}" value="{{ form.whatsapp_numero_prueba.value|default:'' }}" class="formulario_input" placeholder="573001112233">
+                <p class="mt-2 text-sm text-gray-500">Use formato internacional sin +, espacios ni guiones.</p>
+                {% if form.whatsapp_numero_prueba.errors %}<p class="mt-2 text-sm text-red-600">{{ form.whatsapp_numero_prueba.errors.0 }}</p>{% endif %}
+            </div>
+        </div>
+
+        <div class="flex gap-4">
+            <button type="submit" class="btn btn-md btn-success">
+                Guardar configuración
+            </button>
+            <a href="{% url 'home' %}" class="btn btn-md btn-secondary">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock contenido %}

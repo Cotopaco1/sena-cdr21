@@ -135,3 +135,45 @@ class ConfiguracionSistemaForm(forms.ModelForm):
         if impuesto < 0:
             raise ValidationError('El impuesto no puede ser negativo.')
         return impuesto
+
+
+class ConfiguracionWhatsAppForm(forms.ModelForm):
+    class Meta:
+        model = ConfiguracionSistema
+        fields = [
+            'whatsapp_habilitado',
+            'whatsapp_template_factura',
+            'whatsapp_template_language',
+            'whatsapp_numero_prueba',
+        ]
+        labels = {
+            'whatsapp_habilitado': 'Habilitar envío por WhatsApp',
+            'whatsapp_template_factura': 'Nombre de plantilla de factura',
+            'whatsapp_template_language': 'Idioma de plantilla',
+            'whatsapp_numero_prueba': 'Número de prueba',
+        }
+
+    def clean_whatsapp_template_factura(self):
+        template = self.cleaned_data.get('whatsapp_template_factura') or ''
+        return template.strip()
+
+    def clean_whatsapp_template_language(self):
+        language = self.cleaned_data.get('whatsapp_template_language') or ''
+        language = language.strip()
+        if not language:
+            raise ValidationError('Ingrese el idioma de la plantilla.')
+        return language
+
+    def clean_whatsapp_numero_prueba(self):
+        numero = self.cleaned_data.get('whatsapp_numero_prueba') or ''
+        return numero.replace('+', '').replace(' ', '').replace('-', '').strip()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        habilitado = cleaned_data.get('whatsapp_habilitado')
+        template = cleaned_data.get('whatsapp_template_factura')
+
+        if habilitado and not template:
+            self.add_error('whatsapp_template_factura', 'Ingrese la plantilla para habilitar WhatsApp.')
+
+        return cleaned_data

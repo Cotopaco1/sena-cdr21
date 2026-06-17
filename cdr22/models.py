@@ -22,6 +22,10 @@ class ConfiguracionSistema(models.Model):
     siguiente_numero_factura = models.PositiveIntegerField(default=1)
     impuesto_porcentaje = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     moneda = models.CharField(max_length=10, choices=MONEDA_CHOICES, default='COP')
+    whatsapp_habilitado = models.BooleanField(default=False)
+    whatsapp_template_factura = models.CharField(max_length=100, blank=True, null=True)
+    whatsapp_template_language = models.CharField(max_length=10, default='es_CO')
+    whatsapp_numero_prueba = models.CharField(max_length=20, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

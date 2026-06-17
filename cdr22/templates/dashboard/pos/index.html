@@ -70,7 +70,7 @@
                 <input 
                     type="text" 
                     id="cliente_telefono"
-                    placeholder="Ej: 0412-1234567"
+                    placeholder="Ej: 3001234567"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
             </div>
@@ -171,6 +171,14 @@
                     >
                     Enviar por correo
                 </label>
+                <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <input
+                        type="checkbox"
+                        id="enviar_factura_whatsapp"
+                        class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    >
+                    Enviar por WhatsApp
+                </label>
             </div>
 
             <div class="flex gap-3 justify-end">
@@ -196,6 +204,7 @@
     const btnCancelar = document.getElementById('btn_cancelar');
     const generarFacturaPdfInput = document.getElementById('generar_factura_pdf');
     const enviarFacturaEmailInput = document.getElementById('enviar_factura_email');
+    const enviarFacturaWhatsappInput = document.getElementById('enviar_factura_whatsapp');
     let ventaEnProceso = false;
     
     btnBuscarCliente.addEventListener('click', async () => {
@@ -401,9 +410,15 @@
 
         const generarFacturaPdf = generarFacturaPdfInput.checked;
         const enviarFacturaEmail = enviarFacturaEmailInput.checked;
+        const enviarFacturaWhatsapp = enviarFacturaWhatsappInput.checked;
 
         if (enviarFacturaEmail && !cliente.email) {
             Notify.warning('Ingrese el correo del cliente para enviar la factura');
+            return;
+        }
+
+        if (enviarFacturaWhatsapp && !cliente.telefono) {
+            Notify.warning('Ingrese el celular del cliente para enviar la factura por WhatsApp');
             return;
         }
 
@@ -421,7 +436,8 @@
             impuesto: impuesto,
             total: total,
             generar_factura_pdf: generarFacturaPdf,
-            enviar_factura_email: enviarFacturaEmail
+            enviar_factura_email: enviarFacturaEmail,
+            enviar_factura_whatsapp: enviarFacturaWhatsapp
         };
 
         ventaEnProceso = true;
@@ -432,6 +448,7 @@
             productoSearchInput,
             generarFacturaPdfInput,
             enviarFacturaEmailInput,
+            enviarFacturaWhatsappInput,
         ], true);
 
         try {
@@ -462,6 +479,14 @@
                         Notify.warning('La venta se completó, pero no se pudo enviar el correo');
                     }
                 }
+
+                if (enviarFacturaWhatsapp) {
+                    if (orden.whatsapp_enviado) {
+                        Notify.success('Factura enviada por WhatsApp');
+                    } else {
+                        Notify.warning('La venta se completó, pero no se pudo enviar por WhatsApp');
+                    }
+                }
                 
                 // Limpiar formulario
                 limpiarCliente();
@@ -484,6 +509,7 @@
                 productoSearchInput,
                 generarFacturaPdfInput,
                 enviarFacturaEmailInput,
+                enviarFacturaWhatsappInput,
             ], false);
         }
     });

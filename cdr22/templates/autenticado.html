@@ -104,6 +104,7 @@
                             <div class="auth_nav_group_menu">
                                 {% if permisos_usuario.can_manage_settings %}
                                     <a class="auth_nav_group_link" href="{% url 'configuracion_general' %}">General</a>
+                                    <a class="auth_nav_group_link" href="{% url 'configuracion_whatsapp' %}">WhatsApp</a>
                                 {% endif %}
                                 {% if permisos_usuario.can_manage_users %}
                                     <a class="auth_nav_group_link" href="{% url 'usuarios_index' %}">Usuarios</a>

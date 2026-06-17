@@ -24,6 +24,7 @@ from .serializers import (
 from .services.compras import CompraEstadoError, anular_compra, cambiar_estado_compra, crear_compra
 from .services.facturas import enviar_factura_por_email, render_factura_pdf
 from .services.ventas import OrdenStockError, crear_orden_pos
+from .services.whatsapp import enviar_factura_por_whatsapp
 import json
 import logging
 
@@ -298,6 +299,8 @@ class OrdenCreateAPIView(View):
         )
         email_enviado = False
         email_error = None
+        whatsapp_enviado = False
+        whatsapp_error = None
 
         if serializer.validated_data.get('enviar_factura_email'):
             try:
@@ -307,6 +310,14 @@ class OrdenCreateAPIView(View):
                 logger.exception("No se pudo enviar la factura por email para la orden %s", orden.id)
                 email_error = str(e)
 
+        if serializer.validated_data.get('enviar_factura_whatsapp'):
+            try:
+                enviar_factura_por_whatsapp(orden, base_url=base_url)
+                whatsapp_enviado = True
+            except Exception as e:
+                logger.exception("No se pudo enviar la factura por WhatsApp para la orden %s", orden.id)
+                whatsapp_error = str(e)
+
         data = {
             "orden": {
                 'id': orden.id,
@@ -314,6 +325,8 @@ class OrdenCreateAPIView(View):
                 'factura_pdf_url': factura_pdf_url if serializer.validated_data.get('generar_factura_pdf') else None,
                 'email_enviado': email_enviado,
                 'email_error': email_error,
+                'whatsapp_enviado': whatsapp_enviado,
+                'whatsapp_error': whatsapp_error,
                 'cliente': {
                     'cedula': orden.cliente.cedula,
                     'nombre': orden.cliente.nombre,
